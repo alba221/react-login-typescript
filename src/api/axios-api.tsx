@@ -8,10 +8,24 @@ const HEADERS = {
   },
 };
 
-export const apiGet = (url: string) => {
-  return axios.get(`${BASE_GET_URL}${url}`, HEADERS);
+export const apiGet = async (url: string) => {
+  try {
+    return await axios.get(`${BASE_GET_URL}${url}`, HEADERS);
+  } catch (e: any) {
+    if (axios.isAxiosError(e)) {
+      return e.response;
+    }
+    return e;
+  }
 };
 
-export const apiPost = (url: string, data: any) => {
-  return axios.post(`${BASE_POST_URL}${url}`, data, HEADERS);
+export const apiPost = async (url: string, data: any) => {
+  try {
+    return await axios.post(`${BASE_POST_URL}${url}`, data, HEADERS);
+  } catch (e: any) {
+    if (axios.isAxiosError(e)) {
+      return e.response?.data;
+    }
+    return e;
+  }
 };
