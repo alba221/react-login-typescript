@@ -1,11 +1,15 @@
 import { removeToken } from "../../features/userDataSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../hooks/useRedux";
 import { removeSessionToken } from "../store/sessionManager";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { getUserData } from "../auth/userAuth";
 
 const Logout = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [userFirstNameLastName, setFirstNameLastName] = useState("");
+  const effectRun = useRef(false);
 
   const handleLogoutSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,13 +20,30 @@ const Logout = () => {
     navigate("/");
   };
 
+  useEffect(() => {
+    if (!effectRun.current) {
+      const userDetails = async () => {
+        const res = await getUserData();
+        setFirstNameLastName(
+          res.data.data.FirstName + " " + res.data.data.LastName
+        );
+      };
+      userDetails();
+    }
+
+    return () => {
+      effectRun.current = true;
+    };
+  }, []);
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div>
           <h3 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            You have successfully logged in!
+            Wellcome {userFirstNameLastName}
           </h3>
+          <h4>You have successfully logged in!</h4>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogoutSubmit}>
           <div>

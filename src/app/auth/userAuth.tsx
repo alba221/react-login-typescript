@@ -1,12 +1,13 @@
-import { apiPost, apiGet } from "../../api/axios-api";
+import { apiAuth, apiUser } from "../../api/apiActions";
 
 export const authUser = (email: string, password: string) => {
-  return apiPost("/auth/login", {
+  const userData = {
     Email: email,
     Password: password,
-  });
+  };
+  return apiAuth(userData);
 };
 
-export const authHealthCheck = () => {
-  return apiGet("/health");
+export const getUserData = async () => {
+  return await apiUser({});
 };

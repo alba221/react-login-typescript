@@ -1,20 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { authUser } from "../auth/userAuth";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { storeToken } from "../../features/userDataSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { useAppSelector, useAppDispatch } from "../hooks/useRedux";
+import { selectGetToken } from "../selectors/tokenSelectors";
 import { saveToken, getToken } from "../store/sessionManager";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { showToast } from "../hooks/useToast";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const token = useSelector((state: RootState) => state.userData.token);
+  const token = useAppSelector(selectGetToken);
 
   useEffect(() => {
     if (token === null) {
@@ -29,39 +27,26 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const showErrorToast = (errorMessage: string) => {
-    toast.error(errorMessage, {
-      position: toast.POSITION.TOP_CENTER,
-    });
-  };
-
-  const showSuccessToast = (message: string) => {
-    toast.success(message, {
-      position: toast.POSITION.TOP_CENTER,
-    });
-  };
-
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      // const loginHealthCheck = await authHealthCheck()
-      // console.log('data', loginHealthCheck.data)
-
       const response = await authUser(email, password);
-      console.log("response: ", response);
       if (response && response.data?.status === true) {
         dispatch(storeToken(response.data.data));
         saveToken(response.data.data);
         navigate("/wellcome");
-        showSuccessToast("Login successful!");
+        showToast("success", "Login successful!");
       } else if (response && response.status === false) {
-        showErrorToast("Login failed. Please check you email and password!");
+        showToast(
+          "error",
+          "Login failed. Please check you email and password!"
+        );
       } else {
-        showErrorToast("Login failed!");
+        showToast("error", "Login failed!");
       }
     } catch (err) {
-      showErrorToast("Login failed!");
+      showToast("error", "Login failed!");
     }
   };
 

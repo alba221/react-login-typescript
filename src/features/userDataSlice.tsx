@@ -1,5 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface IUserState {
   token: string | null;
@@ -10,7 +9,7 @@ const initialState: IUserState = {
 };
 
 export const userDataSlice = createSlice({
-  name: "userData",
+  name: 'userData',
   initialState,
   reducers: {
     removeToken: (state) => {
